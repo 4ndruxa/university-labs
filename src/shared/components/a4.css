@@ -6,7 +6,7 @@
 }
 .a4-sheet {
   color-scheme: light;
-  --ink: #1d3f9c;
+  --ink: #000;
   box-sizing: border-box;
   width: 210mm;
   min-height: 297mm;
@@ -121,4 +121,65 @@
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
+}
+
+/* Графіки на аркуші: чорно-білі, як на папері */
+.a4-sheet .chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.4em 0;
+  font-family: inherit;
+}
+.a4-sheet .chart-grid {
+  stroke: #ddd;
+}
+.a4-sheet .chart-axis {
+  stroke: #000;
+}
+.a4-sheet .chart-tick,
+.a4-sheet .chart-value,
+.a4-sheet .chart-title {
+  fill: #000;
+  font-size: 13px;
+}
+.a4-sheet .chart-value {
+  font-weight: 700;
+}
+.a4-sheet .chart-bar {
+  fill: #e5e5e5;
+  stroke: #000;
+}
+.a4-sheet .chart-line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.6;
+}
+.a4-sheet .chart-marker {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1.4;
+}
+@media (max-width: 840px) {
+  .a4-sheet .chart-tick,
+  .a4-sheet .chart-value,
+  .a4-sheet .chart-title {
+    font-size: 22px;
+  }
+}
+.a4-sheet .chart-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2em 1.2em;
+  font-size: 12pt;
+}
+.a4-sheet .chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+.a4-sheet figcaption {
+  text-align: center;
+  font-size: 12pt;
 }

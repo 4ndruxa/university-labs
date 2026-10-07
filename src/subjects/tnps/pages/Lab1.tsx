@@ -35,9 +35,9 @@ function Sheet({ data, r, k }: { data: TestData; r: Indicators; k: number }) {
   const sumTerms = r.rows.map((x) => `${x.failed}·${ua(x.tMid)}`).join(' + ')
   return (
     <A4Sheet>
-      <h2>Лабораторна робота №1</h2>
+      <h2>Практична робота №1</h2>
       <p className="a4-center">з дисципліни «Теорія надійності програмних систем»</p>
-      <p className="a4-center">студента групи <Ink>{PROFILE.group} {PROFILE.name}</Ink></p>
+      <p className="a4-center">студента групи <Ink>{PROFILE.group} {PROFILE.nameGenitive}</Ink></p>
 
       <h3>Теоретичний блок</h3>
       <p>1. Надійність – це</p>

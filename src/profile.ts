@@ -1,5 +1,6 @@
 export const PROFILE = {
   name: 'Боднар Андрій',
+  nameGenitive: 'Боднара Андрія',
   initials: 'БА',
   group: 'ІПЗМПм-11',
   listNumber: 1, // = номер варіанту
