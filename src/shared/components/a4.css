@@ -1,0 +1,124 @@
+/* Аркуш А4: завжди білий папір з чорним текстом, незалежно від теми сайту */
+.a4-wrap {
+  margin: 0 auto 1.5rem;
+  width: 210mm;
+  max-width: 100%;
+}
+.a4-sheet {
+  color-scheme: light;
+  --ink: #1d3f9c;
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm 15mm 20mm 25mm;
+  background: #fff;
+  color: #000;
+  font-family: 'Times New Roman', 'Liberation Serif', Tinos, 'Noto Serif', serif;
+  font-size: 14pt;
+  line-height: 1.5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+[data-bs-theme='dark'] .a4-sheet {
+  background: #fafaf7;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+.a4-sheet h2,
+.a4-sheet h3 {
+  font: inherit;
+  font-weight: 700;
+  margin: 0;
+}
+.a4-sheet h2 {
+  text-align: center;
+}
+.a4-sheet h3 {
+  margin-top: 1em;
+}
+.a4-sheet p {
+  margin: 0 0 0.4em;
+}
+.a4-center {
+  text-align: center;
+}
+.a4-sheet table {
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 12pt;
+}
+.a4-sheet td,
+.a4-sheet th {
+  border: 1px solid #000;
+  padding: 0.15em 0.5em;
+  text-align: center;
+}
+.a4-sheet table,
+.a4-sheet figure {
+  break-inside: avoid;
+}
+
+/* Вписані відповіді: «чорнило» на лінії бланка */
+.a4-ink {
+  color: var(--ink);
+  border-bottom: 1px solid #999;
+}
+.a4-answer {
+  color: var(--ink);
+  line-height: 1.6;
+  background: repeating-linear-gradient(transparent 0 calc(1.6em - 1px), #b5b5b5 calc(1.6em - 1px) 1.6em);
+  margin-bottom: 0.6em;
+}
+.a4-answer p,
+.a4-answer ul {
+  margin: 0;
+}
+.a4-answer ul {
+  padding-left: 1.2em;
+}
+
+@media (max-width: 840px) {
+  .a4-wrap {
+    width: 100%;
+  }
+  .a4-sheet {
+    width: 100%;
+    min-height: 0;
+    padding: 16px;
+    font-size: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .a4-sheet table {
+    font-size: 14px;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  body:has(.a4-sheet) .window,
+  body:has(.a4-sheet) footer {
+    display: none !important;
+  }
+  body:has(.a4-sheet) main {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  body:has(.a4-sheet) main > :not(.a4-wrap) {
+    display: none !important;
+  }
+  .a4-wrap {
+    margin: 0;
+    width: auto;
+  }
+  .a4-sheet {
+    width: 210mm;
+    min-height: auto;
+    padding: 20mm 15mm 20mm 25mm;
+    font-size: 14pt;
+    box-shadow: none;
+    background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

@@ -1,3 +1,4 @@
+import { lazy } from 'react'
 import type { Subject } from '../types'
 
 export const tnps: Subject = {
@@ -7,7 +8,13 @@ export const tnps: Subject = {
   icon: 'bi-shield-check',
   description: 'Кількісні показники надійності, статистична оцінка за даними випробувань, закони розподілу відмов.',
   works: [
-    { id: 'lab1', short: 'ЛР1', title: 'Лабораторна робота №1', topic: 'Критерії надійності' },
+    {
+      id: 'lab1',
+      short: 'ЛР1',
+      title: 'Лабораторна робота №1',
+      topic: 'Критерії надійності',
+      component: lazy(() => import('./pages/Lab1')),
+    },
     { id: 'lab2', short: 'ЛР2', title: 'Лабораторна робота №2', topic: 'Найбільш поширені закони розподілу часу' },
     { id: 'lab3', short: 'ЛР3', title: 'Лабораторна робота №3', topic: 'Аналіз надійності складних технічних систем' },
     { id: 'lab4', short: 'ЛР4', title: 'Лабораторна робота №4', topic: 'Методи аналізу надійності систем' },
