@@ -21,6 +21,9 @@ describe('Реєстр предметів', () => {
       })
     }
   })
+  it('кількість лабораторних — як у силабусах', () => {
+    expect(SUBJECTS.map((s) => s.works.length)).toEqual([6, 5])
+  })
   it('пошук і адреси', () => {
     const maid = findSubject('maid')!
     expect(findWork(maid, 'lab2')?.short).toBe('ЛР2')
