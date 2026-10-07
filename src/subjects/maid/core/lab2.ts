@@ -70,23 +70,31 @@ export const LAYOUT = {
   C: [[19, 22, 25], [20, 23, 26], [21, 24, 27]],
 } as const
 
+// Рік невідомий, тому 29.02 допустиме
 const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+const MONTH_IN = ['січні', 'лютому', 'березні', 'квітні', 'травні', 'червні', 'липні', 'серпні', 'вересні', 'жовтні', 'листопаді', 'грудні']
+
+/** Лише звичайне ціле число (без '1e1', '-0', '0x10', '2.5'); інакше NaN */
+export function parseField(s: string): number {
+  const t = s.trim()
+  return /^\d{1,3}$/.test(t) ? Number(t) : Number.NaN
+}
 
 /** Порожній об'єкт — дані коректні */
 export function validate(d: StudentData): Partial<Record<keyof StudentData, string>> {
   const errors: Partial<Record<keyof StudentData, string>> = {}
-  const int = (k: keyof StudentData, lo: number, hi: number) => {
+  const check = (k: keyof StudentData, lo: number, hi: number, message: string) => {
     const v = d[k]
-    if (!Number.isInteger(v) || v < lo || v > hi) errors[k] = `Ціле число від ${lo} до ${hi}`
+    if (!Number.isInteger(v) || v < lo || v > hi) errors[k] = message
   }
-  int('month', 1, 12)
-  int('day', 1, 31)
-  int('zal', 0, 9)
-  int('stud', 0, 9)
-  int('jrn', 1, 100)
-  int('lab', 1, 100)
+  check('day', 1, 31, 'День — від 1 до 31')
+  check('month', 1, 12, 'Місяць — від 1 до 12')
+  check('zal', 0, 9, 'Одна цифра, 0–9')
+  check('stud', 0, 9, 'Одна цифра, 0–9')
+  check('jrn', 1, 100, 'Число від 1 до 100')
+  check('lab', 1, 100, 'Число від 1 до 100')
   if (!errors.day && !errors.month && d.day > DAYS_IN_MONTH[d.month - 1]) {
-    errors.day = `У ${d.month}-му місяці не більше ${DAYS_IN_MONTH[d.month - 1]} днів`
+    errors.day = `У ${MONTH_IN[d.month - 1]} ${d.month === 2 ? 'не більше 29' : DAYS_IN_MONTH[d.month - 1]} днів`
   }
   return errors
 }

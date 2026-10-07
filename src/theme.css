@@ -467,6 +467,31 @@ button.matrix-cell:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
+/* ── Пасхалка ── */
+.bday-egg:hover {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ctext y='24' font-size='24'%3E🎂%3C/text%3E%3C/svg%3E") 16 16, pointer;
+}
+.bday-toast {
+  width: auto;
+  max-width: min(28rem, calc(100vw - 2rem));
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-left: 3px solid var(--accent);
+}
+.bday-wiggle {
+  display: inline-block;
+  animation: bday-wiggle 0.6s ease-in-out 3;
+}
+@keyframes bday-wiggle {
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bday-wiggle {
+    animation: none;
+  }
+}
+
 /* ── Друк ── */
 @media print {
   .no-print,

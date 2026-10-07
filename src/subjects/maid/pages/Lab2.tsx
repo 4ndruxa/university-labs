@@ -2,27 +2,33 @@ import { useMemo, useState } from 'react'
 import { Accordion, Alert, Button, Col, Form, Nav, Row, Tab, Table } from 'react-bootstrap'
 import { MatrixView } from '../components/MatrixView'
 import { ComplexText } from '../components/Numbers'
+import { BirthdayToast } from '../../../shared/components/BirthdayEgg'
 import { Window } from '../../../shared/components/Window'
-import { FIELD_LABELS, LAYOUT, productTerms, solveLab2, validate, type Lab2Result, type StudentData } from '../core'
+import { FIELD_LABELS, LAYOUT, parseField, productTerms, solveLab2, validate, type StudentData } from '../core'
 import { PROFILE } from '../../../profile'
 import { load, remove, save } from '../../../shared/lib/storage'
 
 type Field = keyof StudentData
 type Draft = Record<Field, string>
 
-const FIELDS: { key: Field; hint: string; max: number }[] = [
-  { key: 'day', hint: '1–31', max: 31 },
-  { key: 'month', hint: '1–12', max: 12 },
-  { key: 'zal', hint: 'цифра 0–9', max: 9 },
-  { key: 'stud', hint: 'цифра 0–9', max: 9 },
-  { key: 'jrn', hint: 'за списком групи', max: 100 },
-  { key: 'lab', hint: 'порядковий номер на лабораторній', max: 100 },
+const FIELDS: { key: Field; hint: string }[] = [
+  { key: 'day', hint: '1–31' },
+  { key: 'month', hint: '1–12' },
+  { key: 'zal', hint: 'цифра 0–9' },
+  { key: 'stud', hint: 'цифра 0–9' },
+  { key: 'jrn', hint: 'за списком групи' },
+  { key: 'lab', hint: 'номер лабораторної' },
 ]
 
-const STORAGE_KEY = 'lab2-data'
-const EMPTY: Draft = { day: '', month: '', zal: '', stud: '', jrn: String(PROFILE.listNumber), lab: '' }
-// Вигадані дані для кнопки «Приклад»
-const DEMO: Draft = { day: '15', month: '6', zal: '4', stud: '7', jrn: String(PROFILE.listNumber), lab: '3' }
+const STORAGE_KEY = 'lab2-draft'
+const DEFAULTS: Draft = {
+  day: String(PROFILE.birthDay),
+  month: String(PROFILE.birthMonth),
+  zal: String(PROFILE.recordBookLastDigit),
+  stud: String(PROFILE.studentIdLastDigit),
+  jrn: String(PROFILE.listNumber),
+  lab: '2',
+}
 
 /** Формули елементів з умови (довідка) */
 const ELEMENT_FORMULAS = [
@@ -40,7 +46,7 @@ const ELEMENT_FORMULAS = [
 /** Дані з localStorage можуть бути пошкоджені — беремо лише відомі поля */
 function loadDraft(): Draft {
   const raw = load<unknown>(STORAGE_KEY, {})
-  const draft = { ...EMPTY }
+  const draft = { ...DEFAULTS }
   if (raw && typeof raw === 'object') {
     for (const { key } of FIELDS) {
       const v = (raw as Record<string, unknown>)[key]
@@ -51,8 +57,8 @@ function loadDraft(): Draft {
 }
 
 const toData = (d: Draft): StudentData => {
-  const num = (s: string) => (s.trim() === '' ? Number.NaN : Number(s))
-  return { day: num(d.day), month: num(d.month), zal: num(d.zal), stud: num(d.stud), jrn: num(d.jrn), lab: num(d.lab) }
+  const n = parseField
+  return { day: n(d.day), month: n(d.month), zal: n(d.zal), stud: n(d.stud), jrn: n(d.jrn), lab: n(d.lab) }
 }
 
 const SUB = ['₁', '₂', '₃']
@@ -63,33 +69,38 @@ function StepTitle({ n, text }: { n: number; text: string }) {
 
 export default function Lab2() {
   const [draft, setDraft] = useState<Draft>(loadDraft)
-  const [touched, setTouched] = useState(false)
-  const [result, setResult] = useState<Lab2Result | null>(null)
+  // Помилку поля показуємо після виходу з нього або після «Сформувати», далі — наживо
+  const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
+  const [submitted, setSubmitted] = useState(false)
   const [step, setStep] = useState('input')
   const [sel, setSel] = useState<[number, number]>([0, 0])
 
-  const errors = useMemo(() => validate(toData(draft)), [draft])
+  const data = useMemo(() => toData(draft), [draft])
+  const errors = useMemo(() => validate(data), [data])
   const valid = Object.keys(errors).length === 0
+  const result = useMemo(() => (valid ? solveLab2(data) : null), [valid, data])
+  const isDefault = FIELDS.every(({ key }) => draft[key] === DEFAULTS[key])
+  const errorOf = (k: Field) => (submitted || touched[k] ? errors[k] : undefined)
+
+  const birthdayOk = !errors.day && !errors.month
+  const [eggOpened, setEggOpened] = useState<number | null>(null)
 
   const update = (k: Field, v: string) => {
     const next = { ...draft, [k]: v }
     setDraft(next)
     save(STORAGE_KEY, next)
-    setResult(null)
   }
 
   const compute = () => {
-    setTouched(true)
-    if (!valid) return
-    setResult(solveLab2(toData(draft)))
-    setStep('matrices')
+    setSubmitted(true)
+    if (valid) setStep('matrices')
   }
 
-  const fill = (d: Draft, persist = true) => {
-    setDraft(d)
-    if (persist) save(STORAGE_KEY, d)
-    setResult(null)
-    setTouched(false)
+  const resetToMine = () => {
+    remove(STORAGE_KEY)
+    setDraft(DEFAULTS)
+    setTouched({})
+    setSubmitted(false)
   }
 
   const [si, sj] = sel
@@ -110,36 +121,45 @@ export default function Lab2() {
               title="Вікно 1. Введення початкових даних"
               icon="bi-person-lines-fill"
               actions={
-                <div className="d-flex gap-2 no-print">
-                  <Button size="sm" variant="outline-secondary" onClick={() => fill(DEMO)} title="Вигадані дані для перевірки">
-                    <i className="bi bi-magic me-1" />Приклад
-                  </Button>
-                  <Button size="sm" variant="outline-secondary" onClick={() => { remove(STORAGE_KEY); fill(EMPTY, false) }}>
-                    <i className="bi bi-eraser me-1" />Очистити
+                <div className="no-print">
+                  <Button size="sm" variant="outline-secondary" onClick={resetToMine} disabled={isDefault}>
+                    <i className="bi bi-person-check me-1" />Мої дані
                   </Button>
                 </div>
               }
             >
+              <p className="small text-body-secondary mb-3">
+                <i className={`bi ${isDefault ? 'bi-person-check' : 'bi-pencil'} me-1`} />
+                {isDefault
+                  ? `Підставлено ваші дані (${PROFILE.name}, №${PROFILE.listNumber}) — їх можна змінити.`
+                  : 'Дані змінено. «Мої дані» повертає початкові значення.'}
+              </p>
               <Form noValidate onSubmit={(e) => { e.preventDefault(); compute() }}>
                 <Row className="g-3">
-                  {FIELDS.map(({ key, hint, max }) => (
+                  {FIELDS.map(({ key, hint }) => (
                     <Col md={6} lg={4} key={key}>
                       <Form.Group controlId={`f-${key}`}>
-                        <Form.Label className="fw-medium">{FIELD_LABELS[key]}</Form.Label>
+                        <Form.Label className="fw-medium">
+                          {key === 'day' || key === 'month'
+                            ? <span className="bday-egg" onClick={() => setEggOpened(Date.now())}>{FIELD_LABELS[key]}</span>
+                            : FIELD_LABELS[key]}
+                        </Form.Label>
                         <Form.Control
-                          type="number"
+                          type="text"
                           inputMode="numeric"
-                          min={key === 'zal' || key === 'stud' ? 0 : 1}
-                          max={max}
+                          pattern="[0-9]*"
+                          maxLength={3}
+                          autoComplete="off"
                           value={draft[key]}
                           placeholder={hint}
                           onChange={(e) => update(key, e.target.value)}
-                          isInvalid={touched && !!errors[key]}
-                          aria-invalid={touched && !!errors[key]}
+                          onBlur={() => setTouched((t) => ({ ...t, [key]: true }))}
+                          isInvalid={!!errorOf(key)}
+                          aria-invalid={!!errorOf(key)}
                           aria-describedby={`f-${key}-err`}
                           className="mono"
                         />
-                        <Form.Control.Feedback type="invalid" id={`f-${key}-err`}>{errors[key]}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid" id={`f-${key}-err`}>{errorOf(key)}</Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                   ))}
@@ -149,7 +169,7 @@ export default function Lab2() {
                     <i className="bi bi-cpu me-2" />Сформувати матриці та обчислити Q
                   </Button>
                   <span className="small text-body-secondary">
-                    <i className="bi bi-shield-lock me-1" />Дані зберігаються лише у вашому браузері; «Очистити» їх видаляє
+                    <i className="bi bi-shield-lock me-1" />Змінені значення зберігаються лише в цьому браузері
                   </span>
                 </div>
               </Form>
@@ -254,7 +274,13 @@ export default function Lab2() {
         </Tab.Content>
       </Tab.Container>
 
-      {!result && step !== 'input' && <Alert variant="info">Спершу введіть дані у кроці 1.</Alert>}
+      {!result && step !== 'input' && <Alert variant="info">Спершу виправте дані у кроці 1.</Alert>}
+      <BirthdayToast
+        day={birthdayOk ? data.day : PROFILE.birthDay}
+        month={birthdayOk ? data.month : PROFILE.birthMonth}
+        opened={eggOpened}
+        onClose={() => setEggOpened(null)}
+      />
     </>
   )
 }

@@ -53,7 +53,15 @@ export function tokenize(src: string): Token[] {
     if (/\s/.test(c)) { i++; continue }
     if (SYMBOLS.includes(c)) { tokens.push({ kind: 'sym', value: c, pos: i }); i++; continue }
     const m = /^(?:\d+(?:\.\d*)?|\.\d+)/.exec(src.slice(i))
-    if (m) { tokens.push({ kind: 'num', value: Number(m[0]), pos: i }); i += m[0].length; continue }
+    if (m) {
+      const value = Number(m[0])
+      if (!Number.isFinite(value)) throw new ParseError('Число занадто велике', i)
+      const next = i + m[0].length
+      if (src[next] === 'e' || src[next] === 'E') throw new ParseError('Експоненційний запис не підтримується — пишіть, напр., 1000', next)
+      tokens.push({ kind: 'num', value, pos: i })
+      i = next
+      continue
+    }
     throw new ParseError(`Невідомий символ «${src[i]}» (дробові числа пишуться через крапку: 0.5)`, i)
   }
   tokens.push({ kind: 'end', pos: src.length })

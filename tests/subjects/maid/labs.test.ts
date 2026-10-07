@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { LAYOUT, VARIANTS, buildElements, solveLab1, solveLab2, validate, type StudentData } from '../../../src/subjects/maid/core'
+import { PROFILE } from '../../../src/profile'
+import { LAYOUT, VARIANTS, buildElements, parseField, solveLab1, solveLab2, validate, type StudentData } from '../../../src/subjects/maid/core'
 import { expectComplex, expectInterval } from './helpers'
 
 describe('ЛР1, варіант 1', () => {
@@ -55,8 +56,38 @@ describe('ЛР2', () => {
     expect(validate(sample)).toEqual({})
     expect(validate({ ...sample, month: 13 }).month).toBeDefined()
     expect(validate({ ...sample, day: 31, month: 2 }).day).toMatch(/не більше 29/)
+    expect(validate({ ...sample, day: 29, month: 2 })).toEqual({})
+    expect(validate({ ...sample, day: 30, month: 2 }).day).toBeDefined()
+    expect(validate({ ...sample, day: 31, month: 4 }).day).toBe('У квітні 30 днів')
     expect(validate({ ...sample, zal: 10 }).zal).toBeDefined()
     expect(validate({ ...sample, jrn: Number.NaN }).jrn).toBeDefined()
     expect(() => solveLab2({ ...sample, stud: -1 })).toThrow(/студентського/)
+  })
+  it('у полях — лише звичайні цілі числа', () => {
+    expect(['12', ' 7 ', '012', '0'].map(parseField)).toEqual([12, 7, 12, 0])
+    for (const bad of ['', ' ', '1e1', '-0', '0x10', '2.5', '1,5', '+3', '1000']) expect(parseField(bad), bad).toBeNaN()
+  })
+})
+
+describe('ЛР2: дані студента за замовчуванням', () => {
+  const mine: StudentData = {
+    day: PROFILE.birthDay,
+    month: PROFILE.birthMonth,
+    zal: PROFILE.recordBookLastDigit,
+    stud: PROFILE.studentIdLastDigit,
+    jrn: PROFILE.listNumber,
+    lab: 2,
+  }
+  it('коректні', () => expect(validate(mine)).toEqual({}))
+  it('елементи вручну (12.11, заліковка 3, студентський 0, №1, ЛР2)', () => {
+    const e = buildElements(mine)
+    expectComplex(e[1], [-1, 1], [-3, 3]) //       i[0 ± 3]
+    expectComplex(e[2], [2, 22], [-4, 0]) //       [12 ± 10]
+    expectComplex(e[3], [-2, 2], [-0.2, 1.4]) //   i[((1+2) ± 4)/5]
+    expectInterval(e[5].im, [-0.75, 2.25]) //      [((0+3) ± 6)/4]
+    expectInterval(e[6].re, [6.5, 16.5]) //        [(12+11)/2 ± 5]
+    expectInterval(e[8].re, [4.5, 7]) //           [((12+11) ± 5)/4]
+    expectInterval(e[12].im, [-3, 5]) //           [(1+2)/3 ± 4]
+    expectInterval(e[15].re, [-2.5, 5.5]) //       [(0+3)/2 ± 4]
   })
 })
