@@ -1,0 +1,491 @@
+/* Тема поверх Bootstrap 5.3 */
+
+:root,
+[data-bs-theme='light'] {
+  --accent: #4f46e5;
+  --accent-rgb: 79, 70, 229;
+  --accent-soft: #eef2ff;
+  --re: #2563eb;
+  --im: #b45309;
+  --surface: #f5f6fb;
+  --bs-body-bg: var(--surface);
+  --bs-primary: var(--accent);
+  --bs-primary-rgb: var(--accent-rgb);
+  --bs-link-color: var(--accent);
+  --bs-link-color-rgb: var(--accent-rgb);
+  --bs-link-hover-color: #4338ca;
+  --bs-font-monospace: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+[data-bs-theme='dark'] {
+  --accent: #818cf8;
+  --accent-rgb: 129, 140, 248;
+  --accent-soft: rgba(129, 140, 248, 0.12);
+  --re: #60a5fa;
+  --im: #fbbf24;
+  --surface: #12141c;
+  --bs-body-bg: var(--surface);
+  --bs-primary: var(--accent);
+  --bs-primary-rgb: var(--accent-rgb);
+  --bs-link-color: var(--accent);
+  --bs-link-color-rgb: var(--accent-rgb);
+  --bs-link-hover-color: #a5b4fc;
+  --bs-tertiary-bg: #1b1e29;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* ── Акцент дисципліни ── */
+[data-accent='tnps'] {
+  --accent: #0d9488;
+  --accent-rgb: 13, 148, 136;
+  --accent-soft: #e6f6f4;
+}
+[data-bs-theme='dark'] [data-accent='tnps'] {
+  --accent: #2dd4bf;
+  --accent-rgb: 45, 212, 191;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+}
+[data-accent] {
+  --bs-primary: var(--accent);
+  --bs-primary-rgb: var(--accent-rgb);
+  --bs-link-color: var(--accent);
+  --bs-link-color-rgb: var(--accent-rgb);
+  --bs-link-hover-color: color-mix(in srgb, var(--accent) 80%, #000);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--accent) 85%, #000);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--accent) 85%, #000);
+  --bs-btn-active-bg: color-mix(in srgb, var(--accent) 72%, #000);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--accent) 72%, #000);
+  --bs-btn-disabled-bg: var(--accent);
+  --bs-btn-disabled-border-color: var(--accent);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: var(--accent);
+  --bs-btn-hover-border-color: var(--accent);
+  --bs-btn-active-bg: var(--accent);
+  --bs-btn-active-border-color: var(--accent);
+}
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--accent);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(var(--accent-rgb), 0.6);
+  box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb), 0.2);
+}
+
+/* ── Навігація ── */
+.app-navbar {
+  background: linear-gradient(90deg, #1e1b4b, #312e81 55%, #4338ca);
+}
+.app-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 0.5rem;
+  padding-inline: 0.85rem !important;
+}
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+.brand-mark {
+  color: #fbbf24;
+  font-size: 1.35rem;
+}
+.app-navbar > .container {
+  flex-wrap: nowrap;
+}
+@media (min-width: 992px) {
+  .app-navbar .dropdown-menu {
+    min-width: 20rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .app-navbar .navbar-brand {
+    font-size: 1rem;
+    margin-right: 0.25rem;
+  }
+  .app-navbar .navbar-toggler {
+    padding: 0.3rem 0.5rem;
+  }
+}
+.app-navbar .dropdown-item,
+.menu-offcanvas .dropdown-item {
+  white-space: normal;
+  padding-block: 0.45rem;
+}
+.app-navbar .dropdown-item.active,
+.app-navbar .dropdown-item:active {
+  background: var(--accent-soft);
+  color: var(--bs-body-color);
+}
+.subject-menu-title {
+  max-width: 22rem;
+  white-space: normal;
+  font-weight: 600;
+}
+
+/* ── Студент ── */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1e1b4b;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.student-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 0.2rem 0.9rem 0.2rem 0.2rem;
+  color: #fff;
+  font-size: 0.85rem;
+  min-height: 44px;
+}
+.student-badge:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+@media (max-width: 1199.98px) {
+  .student-badge {
+    padding: 0.2rem;
+  }
+}
+.student-details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 1rem;
+}
+.student-details dt {
+  font-weight: 400;
+  color: var(--bs-secondary-color);
+}
+.student-details dd {
+  margin: 0;
+  font-weight: 600;
+}
+.hero-avatar {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  box-shadow: 0 0 0 0.6rem rgba(255, 255, 255, 0.08);
+}
+
+/* ── Мобільне меню ── */
+@media (max-width: 991.98px) {
+  .menu-offcanvas {
+    background: #1e1b4b;
+    color: #fff;
+  }
+  .menu-offcanvas .student-details dt {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .menu-offcanvas .nav-link {
+    padding: 0.7rem 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 0.5rem;
+  }
+  .menu-offcanvas .nav-link:hover,
+  .menu-offcanvas .nav-link.active,
+  .menu-offcanvas .nav-link.show {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .menu-offcanvas .dropdown-menu {
+    background: rgba(255, 255, 255, 0.06);
+    border: 0;
+  }
+  .menu-offcanvas .dropdown-item,
+  .menu-offcanvas .dropdown-header {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .menu-offcanvas .dropdown-item .text-body-secondary {
+    color: rgba(255, 255, 255, 0.55) !important;
+  }
+  .menu-offcanvas .dropdown-item.active,
+  .menu-offcanvas .dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+}
+
+/* ── Навігація всередині дисципліни ── */
+.work-pills .nav-link {
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+}
+.variant-link {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--bs-secondary-color);
+}
+.variant-link:hover {
+  color: var(--accent);
+}
+.variant-select {
+  width: auto;
+}
+
+/* ── Головна ── */
+.hero {
+  background:
+    radial-gradient(circle at 85% 20%, rgba(251, 191, 36, 0.18), transparent 40%),
+    radial-gradient(circle at 10% 90%, rgba(96, 165, 250, 0.2), transparent 45%),
+    linear-gradient(135deg, #1e1b4b, #3730a3);
+  color: #fff;
+  border-radius: 1.25rem;
+}
+.hero .lead {
+  color: rgba(255, 255, 255, 0.8);
+}
+.hero-formula {
+  font-family: var(--bs-font-monospace);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.75rem;
+}
+.lab-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lab-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.75rem 1.5rem rgba(var(--accent-rgb), 0.15) !important;
+}
+.lab-icon {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.85rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.4rem;
+}
+
+/* ── «Вікна» ── */
+.window {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.window > .card-header {
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--bs-border-color);
+  padding: 0.75rem 1.1rem;
+}
+.window-dots span {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  margin-right: 0.3rem;
+}
+.window-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+@media (max-width: 575.98px) {
+  .window > .card-header {
+    flex-wrap: wrap;
+  }
+  .window-actions {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+}
+
+/* ── Числа ── */
+.mono {
+  font-family: var(--bs-font-monospace);
+  font-variant-numeric: tabular-nums;
+}
+.re {
+  color: var(--re);
+}
+.im {
+  color: var(--im);
+}
+.result-tile {
+  border-radius: 0.85rem;
+  border: 1px solid var(--bs-border-color);
+  background: var(--bs-body-bg);
+  padding: 0.85rem 1rem;
+  height: 100%;
+}
+.result-tile .label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color);
+}
+.result-tile .value {
+  font-size: 1.05rem;
+  word-break: break-word;
+}
+.result-tile.emph {
+  border-color: rgba(var(--accent-rgb), 0.45);
+  background: var(--accent-soft);
+}
+
+/* ── Матриці ── */
+.matrix {
+  display: inline-grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  position: relative;
+  border-left: 2px solid var(--bs-body-color);
+  border-right: 2px solid var(--bs-body-color);
+  border-radius: 0.6rem;
+}
+.matrix-cell {
+  position: relative;
+  border-radius: 0.5rem;
+  background: var(--bs-tertiary-bg);
+  padding: 1.05rem 0.65rem 0.45rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  line-height: 1.35;
+  text-align: left;
+  border: 1px solid transparent;
+  color: inherit;
+}
+button.matrix-cell {
+  cursor: pointer;
+}
+button.matrix-cell:hover {
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+.matrix-cell.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.matrix-cell.highlight {
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+.matrix-cell .idx {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.65rem;
+  font-size: 0.68rem;
+  color: var(--bs-secondary-color);
+}
+
+/* ── Покрокове обчислення ── */
+.trace-table td {
+  vertical-align: middle;
+}
+.trace-table td.mono {
+  white-space: nowrap;
+}
+.trace-table details summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+/* ── SVG ── */
+.plot {
+  width: 100%;
+  height: auto;
+  background: var(--bs-body-bg);
+  border-radius: 0.75rem;
+  border: 1px solid var(--bs-border-color);
+}
+.plot text {
+  font-family: var(--bs-font-monospace);
+  font-size: 11px;
+  fill: var(--bs-secondary-color);
+}
+.plot .axis {
+  stroke: var(--bs-secondary-color);
+  stroke-width: 1;
+}
+.plot .grid {
+  stroke: var(--bs-border-color);
+  stroke-width: 1;
+}
+.plane-toggles .form-check {
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+@media (max-width: 575.98px) {
+  .plot text {
+    font-size: 19px;
+  }
+}
+.legend-swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 0.2rem;
+  margin-right: 0.35rem;
+  vertical-align: -0.1rem;
+}
+
+/* ── Кроки ЛР2 ── */
+.steps .nav-link {
+  border-radius: 999px;
+  font-weight: 500;
+}
+.step-num {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(var(--accent-rgb), 0.15);
+  margin-right: 0.4rem;
+  font-size: 0.8rem;
+}
+.nav-link.active .step-num {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Друк ── */
+@media print {
+  .no-print,
+  .breadcrumb,
+  .app-navbar,
+  footer {
+    display: none !important;
+  }
+  .tab-content > .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+    margin-bottom: 1rem;
+    break-inside: avoid;
+  }
+  .window {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+  body {
+    background: #fff;
+  }
+}
