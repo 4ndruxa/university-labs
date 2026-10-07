@@ -1,0 +1,33 @@
+# Залежності та збірка
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Логи
+logs
+*.log
+npm-debug.log*
+
+# Локальні налаштування та секрети
+.env
+.env.*
+*.local
+
+# Матеріали курсу (авторські) та звіти з персональними даними
+*.pdf
+*.doc
+lectures/
+report/
+screenshots/
+/*.png
+*.docx
+
+# Редактори та ОС
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.sw?

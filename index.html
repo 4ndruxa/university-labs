@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="uk" data-bs-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Лабораторні роботи — Боднар Андрій, ІПЗМПм-11" />
+    <script>
+      // Тема до першого рендеру — без миготіння світлої теми
+      try {
+        var t = localStorage.getItem('labs:theme') || localStorage.getItem('interval-labs:theme')
+        if (t && JSON.parse(t) === 'dark') document.documentElement.setAttribute('data-bs-theme', 'dark')
+      } catch (e) {}
+    </script>
+    <title>Лабораторні роботи — Боднар Андрій</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
