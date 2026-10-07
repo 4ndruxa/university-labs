@@ -3,6 +3,7 @@ import { Breadcrumb, Button, Nav, Spinner } from 'react-bootstrap'
 import { subjectHref, workHref } from '../subjects/registry'
 import type { Subject, Work } from '../subjects/types'
 import { Window } from '../shared/components/Window'
+import { ReportButton } from './ReportButton'
 
 export function WorkPage({ subject, work }: { subject: Subject; work: Work }) {
   const idx = subject.works.indexOf(work)
@@ -24,13 +25,16 @@ export function WorkPage({ subject, work }: { subject: Subject; work: Work }) {
           <h1 className="h3 mb-1">{work.title}</h1>
           <div className="text-body-secondary">{work.topic}</div>
         </div>
-        <Nav variant="pills" className="work-pills no-print" activeKey={work.id}>
-          {subject.works.map((w) => (
-            <Nav.Item key={w.id}>
-              <Nav.Link eventKey={w.id} href={workHref(subject, w)}>{w.short}</Nav.Link>
-            </Nav.Item>
-          ))}
-        </Nav>
+        <div className="d-flex flex-column align-items-start align-items-md-end gap-2">
+          <Nav variant="pills" className="work-pills no-print" activeKey={work.id}>
+            {subject.works.map((w) => (
+              <Nav.Item key={w.id}>
+                <Nav.Link eventKey={w.id} href={workHref(subject, w)}>{w.short}</Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
+          <ReportButton subject={subject} work={work} />
+        </div>
       </div>
 
       {Page ? (

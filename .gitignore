@@ -18,6 +18,7 @@ npm-debug.log*
 
 # Матеріали курсу (авторські) та звіти з персональними даними
 *.pdf
+!public/reports/*.pdf
 *.doc
 lectures/
 report/
