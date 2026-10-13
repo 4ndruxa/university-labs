@@ -21,7 +21,7 @@ npm-debug.log*
 !public/reports/*.pdf
 *.doc
 lectures/
-report/
+/report/
 screenshots/
 /*.png
 *.docx

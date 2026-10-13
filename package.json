@@ -10,7 +10,8 @@
     "lint": "oxlint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "report": "tsx tools/report/build.ts"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
@@ -24,7 +25,10 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "docx": "^9.10.0",
     "oxlint": "^1.81.0",
+    "playwright-core": "^1.64.0",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.3"

@@ -25,6 +25,7 @@ npm run dev        # http://localhost:5173
 | `npm run lint` | перевірка коду (oxlint) |
 | `npm run build` | перевірка типів і збірка в `dist/` |
 | `npm run preview` | перегляд зібраної версії |
+| `npm run report -- …` | звіти у Word/PDF (див. «Звіти») |
 
 ## Структура
 
@@ -42,6 +43,8 @@ src/
       components/       матриці, комплексна площина, покрокова таблиця
       pages/            ЛР1, ЛР2, довідка
     tnps/               Теорія надійності програмних систем
+tools/report/           генератор звітів (у збірку сайту не входить)
+public/reports/         PDF-звіти для кнопки «Звіт»
 tests/
   subjects/<дисципліна>/   тести обчислень
   shared/                  тести реєстру та архітектури
@@ -51,6 +54,22 @@ tests/
 **Нова робота** — сторінка в `pages/` і запис у `works` у `meta.ts`.
 
 Адреси сторінок: `#/` — головна, `#/maid` — дисципліна, `#/maid/lab1` — робота.
+
+## Звіти
+
+Генератор у `tools/report/` збирає звіти з того самого ядра, що й сайт, і сам робить скриншоти «вікон»
+(headless Chromium, 1366×768, світла тема). PDF робиться через LibreOffice (`soffice`).
+
+```bash
+npx playwright-core install chromium-headless-shell   # один раз
+npm run report -- maid/lab2            # report/Боднар_МАІД_ЛР2.docx
+npm run report -- all --pdf            # усі звіти, Word + PDF
+npm run report -- all --publish        # + копія PDF у public/reports/ для кнопки «Звіт»
+```
+
+`report/` у git не потрапляє — це робочі файли для правок і здачі. Посилання для кнопки «Звіт»
+задаються в `src/reports.ts` (`'maid/lab1': 'reports/maid-lab1.pdf'`); тест перевіряє, що файл існує.
+**Новий звіт** — модуль у `tools/report/labs/` і рядок у `REPORTS` у `tools/report/build.ts`.
 
 ## Примітки щодо обчислень (МАІД)
 
