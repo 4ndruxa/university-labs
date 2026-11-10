@@ -12,6 +12,7 @@ import { Interval } from './interval'
 export type Node =
   | { k: 'num'; v: number }
   | { k: 'x' }
+  | { k: 'param'; name: string } // параметр моделі (a, b, c) — значення береться з env
   | { k: 'neg'; a: Node }
   | { k: 'bin'; op: '+' | '-' | '*' | '/'; a: Node; b: Node }
   | { k: 'pow'; a: Node; b: Node }
@@ -49,7 +50,21 @@ type Token =
 
 const NORMALIZE: Record<string, string> = { '−': '-', '–': '-', '·': '*', '×': '*', '÷': '/', 'π': 'pi', '²': '^2', '³': '^3', ';': ',' }
 
-function tokenize(src: string): Token[] {
+/** Слово → відомі назви; якщо розбити не вдається — слово як є (парсер повідомить «невідома назва») */
+function splitWord(word: string, params: readonly string[]): [string, number][] {
+  const known = [...FUNCTIONS, ...Object.keys(ALIASES), 'x', 'pi', 'e', ...params].sort((p, q) => q.length - p.length)
+  const out: [string, number][] = []
+  let at = 0
+  while (at < word.length) {
+    const name = known.find((k) => word.startsWith(k, at))
+    if (!name) return [[word, 0]]
+    out.push([name, at])
+    at += name.length
+  }
+  return out
+}
+
+function tokenize(src: string, params: readonly string[] = []): Token[] {
   const tokens: Token[] = []
   let i = 0
   while (i < src.length) {
@@ -64,15 +79,8 @@ function tokenize(src: string): Token[] {
     }
     if (/[a-zA-Zа-яА-Я]/.test(c)) {
       const m = /^[a-zA-Zа-яА-Я]+/.exec(src.slice(i))!
-      // «xsin» або «2xx» — розбиваємо на x і решту, щоб працювало неявне множення
-      let word = m[0].toLowerCase()
-      let at = i
-      while (word.startsWith('x') && word !== 'x' && !FUNCTIONS.some((f) => word === f) && !(word in ALIASES)) {
-        tokens.push({ t: 'id', v: 'x', pos: at })
-        word = word.slice(1)
-        at++
-      }
-      tokens.push({ t: 'id', v: word, pos: at })
+      // «2xsin», «bx», «cln» — розбиваємо слово на відомі назви (найдовша спершу), щоб працювало неявне множення
+      for (const [part, at] of splitWord(m[0].toLowerCase(), params)) tokens.push({ t: 'id', v: part, pos: i + at })
       i += m[0].length
       continue
     }
@@ -92,9 +100,10 @@ function tokenize(src: string): Token[] {
   return tokens
 }
 
-export function parseFunction(src: string): Node {
+/** params — назви параметрів моделі (напр. ['a', 'b', 'c']), окрім змінної x */
+export function parseFunction(src: string, params: readonly string[] = []): Node {
   if (!src.trim()) throw new FuncError('Введіть формулу', 0)
-  const tokens = tokenize(src)
+  const tokens = tokenize(src, params)
   let p = 0
   const peek = () => tokens[p]
   const isSym = (v: string) => peek().t === 'sym' && (peek() as { v: string }).v === v
@@ -146,6 +155,7 @@ export function parseFunction(src: string): Node {
     if (tok.t === 'id') {
       p++
       if (tok.v === 'x') return { k: 'x' }
+      if (params.includes(tok.v)) return { k: 'param', name: tok.v }
       if (tok.v === 'pi') return { k: 'num', v: Math.PI }
       if (tok.v === 'e') return { k: 'num', v: Math.E }
       const name = (ALIASES[tok.v] ?? tok.v) as FnName
@@ -203,6 +213,7 @@ export function formatFunction(n: Node): string {
   switch (n.k) {
     case 'num': return num(n.v)
     case 'x': return 'x'
+    case 'param': return n.name
     case 'neg': return `−${wrap(n.a, PREC.neg)}`
     case 'pow': return `${wrap(n.a, PREC.atom)}^${wrap(n.b, PREC.atom)}`
     case 'fn': return `${n.name}(${n.args.map(formatFunction).join(', ')})`
@@ -231,12 +242,22 @@ function powReal(a: number, b: number): number {
   return a ** b
 }
 
-export function evalAt(n: Node, x: number): number {
-  const r = (m: Node) => evalAt(m, x)
+/** Значення параметрів моделі */
+export type Env = Readonly<Record<string, number>>
+
+const param = (env: Env, name: string): number => {
+  const v = env[name]
+  if (v === undefined) throw new DomainError(`не задано значення параметра ${name}`)
+  return v
+}
+
+export function evalAt(n: Node, x: number, env: Env = {}): number {
+  const r = (m: Node) => evalAt(m, x, env)
   let v: number
   switch (n.k) {
     case 'num': return n.v
     case 'x': return x
+    case 'param': return param(env, n.name)
     case 'neg': return -r(n.a)
     case 'pow': v = powReal(r(n.a), r(n.b)); break
     case 'bin': {
@@ -328,11 +349,12 @@ function powI(A: Interval, B: Interval, bNode: Node): Interval {
   return mono(B.mul(lnI(A)), Math.exp)
 }
 
-export function evalInterval(n: Node, X: Interval): Interval {
-  const r = (m: Node) => evalInterval(m, X)
+export function evalInterval(n: Node, X: Interval, env: Env = {}): Interval {
+  const r = (m: Node) => evalInterval(m, X, env)
   switch (n.k) {
     case 'num': return new Interval(n.v)
     case 'x': return X
+    case 'param': return new Interval(param(env, n.name))
     case 'neg': return r(n.a).neg()
     case 'pow': return powI(r(n.a), r(n.b), n.b)
     case 'bin': {

@@ -73,14 +73,18 @@ export function LineChart({ x, series, yMin = 0, yMax = 1, xTicks, bands = [], z
         {(xTicks ?? x).map((t) => (
           <text key={t} className="chart-tick" x={sx(t)} y={H - M.b + 16} textAnchor="middle">{fmtTick(t)}</text>
         ))}
-        {bands.map((b, i) => (
+        {bands.map((band, i) => {
+          // смуга обрізається межами осі x
+          const b = { ...band, from: Math.max(band.from, x[0]), to: Math.min(band.to, x[x.length - 1]) }
+          return (
           <g key={i}>
             <rect className="chart-band" x={sx(b.from)} y={M.t} width={Math.max(1, sx(b.to) - sx(b.from))} height={sy(yMin) - M.t} />
             <line className="chart-band-edge" x1={sx(b.from)} x2={sx(b.from)} y1={M.t} y2={sy(yMin)} />
             <line className="chart-band-edge" x1={sx(b.to)} x2={sx(b.to)} y1={M.t} y2={sy(yMin)} />
             {b.label && <text className="chart-title" x={sx((b.from + b.to) / 2)} y={M.t - 6} textAnchor="middle">{b.label}</text>}
           </g>
-        ))}
+          )
+        })}
         {zeroLine && yMin < 0 && yMax > 0 && <line className="chart-zero" x1={M.l} x2={W - M.r} y1={sy(0)} y2={sy(0)} />}
         <line className="chart-axis" x1={M.l} x2={W - M.r} y1={sy(yMin)} y2={sy(yMin)} />
         <line className="chart-axis" x1={M.l} x2={M.l} y1={M.t} y2={sy(yMin)} />
