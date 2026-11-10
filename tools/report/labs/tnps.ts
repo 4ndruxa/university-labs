@@ -2,8 +2,8 @@
 import { AlignmentType, Paragraph, TextRun } from 'docx'
 import { PROFILE } from '../../../src/profile'
 import { computeIndicators } from '../../../src/subjects/tnps/core/indicators'
-import { LAB1_INTERVAL, LAB1_TASK } from '../../../src/subjects/tnps/core/lab1'
-import { LAB2_VARIANTS, solveLab2 } from '../../../src/subjects/tnps/core/lab2'
+import { PR1_INTERVAL, PR1_TASK } from '../../../src/subjects/tnps/core/pr1'
+import { PR2_VARIANTS, solvePr2 } from '../../../src/subjects/tnps/core/pr2'
 import { dash, figure, grid, link, p, runs, table, type Block, type Col } from '../lib/docx'
 import { withSite } from '../lib/shots'
 import type { LabReport } from '../types'
@@ -37,11 +37,11 @@ const electronic = (subject: string, work: string): Block[] => [
   p(['Репозиторій: ', link(REPO_URL)], { alignment: AlignmentType.LEFT }),
 ]
 
-export const tnpsLab1: LabReport = {
-  file: 'ТНПС_ЛР1',
+export const tnpsPr1: LabReport = {
+  file: 'ТНПС_ПР1',
   async build() {
-    const data = LAB1_TASK
-    const k = LAB1_INTERVAL
+    const data = PR1_TASK
+    const k = PR1_INTERVAL
     const r = computeIndicators(data)
     const row = r.rows[k - 1]
     const sumTerms = r.rows.map((x) => `${x.failed}·${ua(x.tMid)}`).join(' + ')
@@ -83,19 +83,19 @@ export const tnpsLab1: LabReport = {
         r.rows.map((x) => [String(x.index), `${ua(x.t0)}–${ua(x.t1)}`, String(x.failed), String(x.nStart), String(x.nEnd), ua(x.p), ua(x.q), ua(x.f), x.lambda === null ? '—' : ua(x.lambda)]),
       ),
       p(`Відповідь: T ≈ ${ua(r.meanTime, 2)} год; для ${k}-го інтервалу P ≈ ${ua(row.p)}; Q ≈ ${ua(row.q)}; f ≈ ${ua(row.f)} год⁻¹; λ ≈ ${ua(row.lambda ?? 0)} год⁻¹.`, { spacing: { before: 160 } }),
-      ...electronic('tnps', 'lab1'),
+      ...electronic('tnps', 'pr1'),
     ]
     return { title: null, body, docTitle: `Практична робота №1 — ${DISCIPLINE}` }
   },
 }
 
-export const tnpsLab2: LabReport = {
-  file: 'ТНПС_ЛР2',
+export const tnpsPr2: LabReport = {
+  file: 'ТНПС_ПР2',
   async build() {
-    const variant = PROFILE.listNumber >= 1 && PROFILE.listNumber <= LAB2_VARIANTS.length ? PROFILE.listNumber : 1
-    const { data, step } = LAB2_VARIANTS[variant - 1]
-    const r = solveLab2(data, step)
-    const [hist, plot] = await withSite('tnps/lab2', async (page, shot) => {
+    const variant = PROFILE.listNumber >= 1 && PROFILE.listNumber <= PR2_VARIANTS.length ? PROFILE.listNumber : 1
+    const { data, step } = PR2_VARIANTS[variant - 1]
+    const r = solvePr2(data, step)
+    const [hist, plot] = await withSite('tnps/pr2', async (page, shot) => {
       // підпис рисунка додаємо в Word окремо
       await page.addStyleTag({ content: '.a4-sheet figcaption { display: none !important; }' })
       return [await shot('.a4-sheet figure >> nth=0'), await shot('.a4-sheet figure >> nth=1')]
@@ -143,7 +143,7 @@ export const tnpsLab2: LabReport = {
       ),
       ...figure(plot, 2, 'Ймовірність безвідмовної роботи P(t)', 150).map((par, i) => (i === 1 ? center(['Рис. 2. Ймовірність безвідмовної роботи P(t)'], { after: 160 }) : par)),
       p(`Висновок: на проміжку 0–20 год ймовірність безвідмовної роботи за експоненціальним законом спадає від 1 до ${ua(r.rows.at(-1)!.pExp, 3)}, а за нормальним — від ${ua(r.rows[0].pNormal, 3)} до ${ua(r.rows.at(-1)!.pNormal, 3)}. ${closer}`),
-      ...electronic('tnps', 'lab2'),
+      ...electronic('tnps', 'pr2'),
     ]
     return { title: null, body, docTitle: `Практична робота №2 — ${DISCIPLINE}` }
   },

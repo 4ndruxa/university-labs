@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { computeIndicators, validateTestData } from '../../../src/subjects/tnps/core/indicators'
-import { LAB1_TASK } from '../../../src/subjects/tnps/core/lab1'
+import { PR1_TASK } from '../../../src/subjects/tnps/core/pr1'
 
-describe('ТНПС ЛР1: показники надійності', () => {
-  const r = computeIndicators(LAB1_TASK)
+describe('ТНПС ПР1: показники надійності', () => {
+  const r = computeIndicators(PR1_TASK)
   it('Δt = 40 / 4 = 10 год', () => expect(r.dt).toBe(10))
   it('T = 970 / 36 ≈ 26.94 год', () => expect(r.meanTime).toBeCloseTo(26.9444, 4))
   it('N(t): 36 → 33 → 27 → 19 → 0', () => {
@@ -28,12 +28,12 @@ describe('ТНПС ЛР1: показники надійності', () => {
     expect(z.rows[1].lambda).toBeNull()
   })
   it('перевірка даних', () => {
-    expect(validateTestData(LAB1_TASK)).toEqual([])
-    expect(validateTestData({ ...LAB1_TASK, failures: [3, 6, 8, 18] })[0]).toMatch(/Сума відмов \(35\)/)
-    expect(validateTestData({ ...LAB1_TASK, failures: [] })).toHaveLength(1)
-    expect(validateTestData({ ...LAB1_TASK, failures: [3, -1, 15, 19] })).toHaveLength(1)
-    expect(validateTestData({ ...LAB1_TASK, totalTime: 0 })).toHaveLength(1)
-    expect(validateTestData({ ...LAB1_TASK, n0: 2.5 })).toHaveLength(1)
-    expect(() => computeIndicators({ ...LAB1_TASK, n0: 0 })).toThrow()
+    expect(validateTestData(PR1_TASK)).toEqual([])
+    expect(validateTestData({ ...PR1_TASK, failures: [3, 6, 8, 18] })[0]).toMatch(/Сума відмов \(35\)/)
+    expect(validateTestData({ ...PR1_TASK, failures: [] })).toHaveLength(1)
+    expect(validateTestData({ ...PR1_TASK, failures: [3, -1, 15, 19] })).toHaveLength(1)
+    expect(validateTestData({ ...PR1_TASK, totalTime: 0 })).toHaveLength(1)
+    expect(validateTestData({ ...PR1_TASK, n0: 2.5 })).toHaveLength(1)
+    expect(() => computeIndicators({ ...PR1_TASK, n0: 0 })).toThrow()
   })
 })

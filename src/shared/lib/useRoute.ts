@@ -8,7 +8,14 @@ export interface Route {
 }
 
 // Адреси першої версії сайту
-const LEGACY: Record<string, string> = { '#home': '#/', '#lab1': '#/maid/lab1', '#lab2': '#/maid/lab2' }
+const LEGACY: Record<string, string> = {
+  '#home': '#/',
+  '#lab1': '#/maid/lab1',
+  '#lab2': '#/maid/lab2',
+  // ТНПС: перші дві роботи — практичні (pr), лабораторні — lr
+  '#/tnps/lab1': '#/tnps/pr1',
+  '#/tnps/lab2': '#/tnps/pr2',
+}
 
 function parse(): Route {
   const legacy = LEGACY[window.location.hash.replace(/\/+$/, '').toLowerCase()]

@@ -4,7 +4,7 @@ import { PROFILE } from '../../../profile'
 import { A4Sheet, Answer, Ink } from '../../../shared/components/A4Sheet'
 import { Window } from '../../../shared/components/Window'
 import { computeIndicators, validateTestData, type Indicators, type TestData } from '../core/indicators'
-import { LAB1_INTERVAL, LAB1_TASK } from '../core/lab1'
+import { PR1_INTERVAL, PR1_TASK } from '../core/pr1'
 
 /** Число для бланка: до digits знаків, десяткова кома */
 const ua = (x: number, digits = 4) => String(Number(x.toFixed(digits))).replace('.', ',')
@@ -18,10 +18,10 @@ interface Draft {
 }
 
 const TASK_DRAFT: Draft = {
-  n0: String(LAB1_TASK.n0),
-  totalTime: String(LAB1_TASK.totalTime),
-  failures: LAB1_TASK.failures.join(', '),
-  interval: String(LAB1_INTERVAL),
+  n0: String(PR1_TASK.n0),
+  totalTime: String(PR1_TASK.totalTime),
+  failures: PR1_TASK.failures.join(', '),
+  interval: String(PR1_INTERVAL),
 }
 
 function parse(d: Draft): { data: TestData; interval: number } {
@@ -90,7 +90,7 @@ function Sheet({ data, r, k }: { data: TestData; r: Indicators; k: number }) {
   )
 }
 
-export default function Lab1() {
+export default function Pr1() {
   const [draft, setDraft] = useState<Draft>(TASK_DRAFT)
   const { data, interval } = useMemo(() => parse(draft), [draft])
   const errors = useMemo(() => {

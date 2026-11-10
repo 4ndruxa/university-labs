@@ -1,19 +1,19 @@
 import { laplace, laplaceTable } from './laplace'
 import { empiricalP, histogram, mean, sampleStd, type Bin } from './statistics'
 
-export interface Lab2Variant {
+export interface Pr2Variant {
   data: number[] // напрацювання 25 об'єктів до відмови, год
   step: number // крок гістограми, год
 }
 
-export const LAB2_VARIANTS: readonly Lab2Variant[] = [
+export const PR2_VARIANTS: readonly Pr2Variant[] = [
   { data: [1, 24, 32, 18, 34, 26, 10, 25, 13, 34, 16, 35, 23, 16, 25, 11, 7, 5, 46, 47, 4, 28, 15, 1, 28], step: 10 },
   { data: [9, 18, 1, 20, 2, 6, 13, 23, 6, 25, 22, 19, 22, 24, 7, 17, 13, 19, 14, 18, 10, 25, 11, 16, 6], step: 5 },
   { data: [38, 52, 26, 22, 53, 62, 8, 72, 48, 25, 50, 71, 24, 70, 41, 35, 74, 61, 59, 55, 47, 16, 60, 68, 18], step: 15 },
 ]
 
 /** P(t) рахуємо протягом 20 год з кроком 5 год */
-export const LAB2_TIMES = [0, 5, 10, 15, 20]
+export const PR2_TIMES = [0, 5, 10, 15, 20]
 
 export interface PRow {
   t: number
@@ -26,7 +26,7 @@ export interface PRow {
   pEmp: number
 }
 
-export interface Lab2Result {
+export interface Pr2Result {
   n: number
   mean: number
   std: number
@@ -35,7 +35,7 @@ export interface Lab2Result {
   rows: PRow[]
 }
 
-export function validateLab2(data: readonly number[], step: number): string[] {
+export function validatePr2(data: readonly number[], step: number): string[] {
   const errors: string[] = []
   if (data.length < 2) errors.push('Потрібно щонайменше 2 значення')
   if (data.some((x) => !Number.isFinite(x) || x <= 0)) errors.push('Напрацювання — додатні числа')
@@ -45,8 +45,8 @@ export function validateLab2(data: readonly number[], step: number): string[] {
   return errors
 }
 
-export function solveLab2(data: readonly number[], step: number, times: readonly number[] = LAB2_TIMES): Lab2Result {
-  const errors = validateLab2(data, step)
+export function solvePr2(data: readonly number[], step: number, times: readonly number[] = PR2_TIMES): Pr2Result {
+  const errors = validatePr2(data, step)
   if (errors.length) throw new Error(errors.join('\n'))
   const m = mean(data)
   const s = sampleStd(data)

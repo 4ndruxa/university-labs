@@ -1,4 +1,4 @@
-// Генерація звітів: npm run report -- maid/lab2 [tnps/lab1 …|all] [--pdf] [--publish]
+// Генерація звітів: npm run report -- maid/lab2 [tnps/pr1 …|all] [--pdf] [--publish]
 // --publish: PDF копіюється в public/reports/<предмет>-<робота>.pdf (кнопка «Звіт» на сайті, src/reports.ts)
 import { execSync } from 'node:child_process'
 import { copyFileSync, mkdirSync, writeFileSync } from 'node:fs'
@@ -7,14 +7,14 @@ import { PROFILE } from '../../src/profile'
 import { report } from './lib/docx'
 import { maidLab1 } from './labs/maid-lab1'
 import { maidLab2 } from './labs/maid-lab2'
-import { tnpsLab1, tnpsLab2 } from './labs/tnps'
+import { tnpsPr1, tnpsPr2 } from './labs/tnps'
 import type { LabReport } from './types'
 
 const REPORTS: Record<string, LabReport> = {
   'maid/lab1': maidLab1,
   'maid/lab2': maidLab2,
-  'tnps/lab1': tnpsLab1,
-  'tnps/lab2': tnpsLab2,
+  'tnps/pr1': tnpsPr1,
+  'tnps/pr2': tnpsPr2,
 }
 
 const args = process.argv.slice(2)

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { LAB2_VARIANTS, solveLab2, validateLab2 } from '../../../src/subjects/tnps/core/lab2'
+import { PR2_VARIANTS, solvePr2, validatePr2 } from '../../../src/subjects/tnps/core/pr2'
 import { laplace, laplaceTable } from '../../../src/subjects/tnps/core/laplace'
 import { empiricalP, histogram, mean, sampleStd } from '../../../src/subjects/tnps/core/statistics'
 
-const [V1, V2, V3] = LAB2_VARIANTS
+const [V1, V2, V3] = PR2_VARIANTS
 const close = (actual: number[], expected: number[], digits = 4) =>
   actual.forEach((v, i) => expect(v, `[${i}]`).toBeCloseTo(expected[i], digits))
 
@@ -43,9 +43,9 @@ describe('Функція Лапласа', () => {
   })
 })
 
-describe('ТНПС ЛР2', () => {
+describe('ТНПС ПР2', () => {
   it('варіант 1', () => {
-    const r = solveLab2(V1.data, V1.step)
+    const r = solvePr2(V1.data, V1.step)
     expect(r.mean).toBeCloseTo(20.96, 10)
     expect(r.lambda).toBeCloseTo(1 / 20.96, 10)
     close(r.rows.map((x) => x.pExp), [1, 0.7878, 0.6206, 0.4889, 0.3851])
@@ -54,25 +54,25 @@ describe('ТНПС ЛР2', () => {
     expect(r.rows.map((x) => x.xTable)).toEqual([-1.61, -1.23, -0.84, -0.46, -0.07])
   })
   it('варіант 2', () => {
-    const r = solveLab2(V2.data, V2.step)
+    const r = solvePr2(V2.data, V2.step)
     expect(r.mean).toBeCloseTo(14.64, 10)
     close(r.rows.map((x) => x.pExp), [1, 0.7107, 0.5051, 0.3589, 0.2551])
     close(r.rows.map((x) => x.pNormalExact), [0.9776, 0.9068, 0.7376, 0.4803, 0.2313])
   })
   it('варіант 3', () => {
-    const r = solveLab2(V3.data, V3.step)
+    const r = solvePr2(V3.data, V3.step)
     expect(r.mean).toBeCloseTo(46.2, 10)
     close(r.rows.map((x) => x.pExp), [1, 0.8974, 0.8054, 0.7228, 0.6486])
     close(r.rows.map((x) => x.pNormalExact), [0.9902, 0.9812, 0.9662, 0.9424, 0.907])
   })
   it('перевірка даних', () => {
-    expect(validateLab2(V1.data, 10)).toEqual([])
-    expect(validateLab2([], 10).length).toBeGreaterThan(0)
-    expect(validateLab2([5], 10).length).toBeGreaterThan(0)
-    expect(validateLab2([3, 3, 3], 10)).toEqual(['Значення не можуть бути всі однакові'])
-    expect(validateLab2([-1, 2], 10).length).toBeGreaterThan(0)
-    expect(validateLab2([Number.NaN, 2], 10).length).toBeGreaterThan(0)
-    expect(validateLab2([1, 2], 0).length).toBeGreaterThan(0)
-    expect(() => solveLab2([1], 10)).toThrow()
+    expect(validatePr2(V1.data, 10)).toEqual([])
+    expect(validatePr2([], 10).length).toBeGreaterThan(0)
+    expect(validatePr2([5], 10).length).toBeGreaterThan(0)
+    expect(validatePr2([3, 3, 3], 10)).toEqual(['Значення не можуть бути всі однакові'])
+    expect(validatePr2([-1, 2], 10).length).toBeGreaterThan(0)
+    expect(validatePr2([Number.NaN, 2], 10).length).toBeGreaterThan(0)
+    expect(validatePr2([1, 2], 0).length).toBeGreaterThan(0)
+    expect(() => solvePr2([1], 10)).toThrow()
   })
 })

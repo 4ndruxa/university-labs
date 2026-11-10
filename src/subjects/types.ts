@@ -2,8 +2,10 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 
 export interface Work {
   id: string // #/<subject>/<id>
-  short: string // «ЛР1»
-  title: string // «Лабораторна робота №1»
+  short: string // «ЛР1» / «ПР3»
+  title: string // «Лабораторна робота №1» / «Практична робота №3»
+  /** Вид роботи; без поля — лабораторна */
+  kind?: 'practical'
   topic: string
   /** Немає сторінки — робота в розробці */
   component?: LazyExoticComponent<ComponentType>

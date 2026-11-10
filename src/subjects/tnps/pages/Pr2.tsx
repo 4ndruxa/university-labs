@@ -6,12 +6,12 @@ import { BarChart } from '../../../shared/components/BarChart'
 import { LineChart } from '../../../shared/components/LineChart'
 import { VariantPicker } from '../../../shared/components/VariantPicker'
 import { Window } from '../../../shared/components/Window'
-import { LAB2_TIMES, LAB2_VARIANTS, solveLab2, validateLab2, type Lab2Result } from '../core/lab2'
+import { PR2_TIMES, PR2_VARIANTS, solvePr2, validatePr2, type Pr2Result } from '../core/pr2'
 
 const ua = (x: number, digits = 4) => String(Number(x.toFixed(digits))).replace('.', ',')
 const dot = (x: number, digits = 4) => String(Number(x.toFixed(digits)))
 
-const myVariant = (): number => (PROFILE.listNumber >= 1 && PROFILE.listNumber <= LAB2_VARIANTS.length ? PROFILE.listNumber : 1)
+const myVariant = (): number => (PROFILE.listNumber >= 1 && PROFILE.listNumber <= PR2_VARIANTS.length ? PROFILE.listNumber : 1)
 
 interface Draft {
   cells: string[]
@@ -19,13 +19,13 @@ interface Draft {
 }
 
 const variantDraft = (v: number): Draft => ({
-  cells: LAB2_VARIANTS[v - 1].data.map(String),
-  step: String(LAB2_VARIANTS[v - 1].step),
+  cells: PR2_VARIANTS[v - 1].data.map(String),
+  step: String(PR2_VARIANTS[v - 1].step),
 })
 
 const num = (s: string) => (/^\s*\d+(\.\d+)?\s*$/.test(s) ? Number(s) : Number.NaN)
 
-function Sheet({ variant, data, step, r }: { variant: number; data: number[]; step: number; r: Lab2Result }) {
+function Sheet({ variant, data, step, r }: { variant: number; data: number[]; step: number; r: Pr2Result }) {
   const rowsOf5 = Array.from({ length: Math.ceil(data.length / 5) }, (_, i) => data.slice(i * 5, i * 5 + 5))
   return (
     <A4Sheet>
@@ -86,7 +86,7 @@ function Sheet({ variant, data, step, r }: { variant: number; data: number[]; st
       </table>
       <figure>
         <LineChart
-          x={LAB2_TIMES}
+          x={PR2_TIMES}
           series={[
             { label: 'експоненціальний', values: r.rows.map((x) => x.pExp), marker: 'circle' },
             { label: 'нормальний', values: r.rows.map((x) => x.pNormal), marker: 'square', dash: '7 4' },
@@ -102,13 +102,13 @@ function Sheet({ variant, data, step, r }: { variant: number; data: number[]; st
   )
 }
 
-export default function Lab2() {
+export default function Pr2() {
   const [variant, setVariant] = useState(myVariant)
   const [draft, setDraft] = useState<Draft>(() => variantDraft(myVariant()))
   const data = useMemo(() => draft.cells.map(num), [draft])
   const step = num(draft.step)
-  const errors = useMemo(() => validateLab2(data, step), [data, step])
-  const result = useMemo(() => (errors.length ? null : solveLab2(data, step)), [errors, data, step])
+  const errors = useMemo(() => validatePr2(data, step), [data, step])
+  const result = useMemo(() => (errors.length ? null : solvePr2(data, step)), [errors, data, step])
   const original = variantDraft(variant)
   const edited = draft.step !== original.step || draft.cells.some((c, i) => c !== original.cells[i])
 
@@ -129,7 +129,7 @@ export default function Lab2() {
       <Window
         title="Вікно 1. Вхідні дані"
         icon="bi-input-cursor-text"
-        actions={<VariantPicker value={variant} count={LAB2_VARIANTS.length} onChange={pick} />}
+        actions={<VariantPicker value={variant} count={PR2_VARIANTS.length} onChange={pick} />}
       >
         <Row className="g-4">
           <Col lg={7}>
