@@ -14,4 +14,5 @@ export const REPORTS: Record<string, string> = {
   'tnps/pr3': 'reports/tnps-pr3.pdf',
   'tnps/pr4': 'reports/tnps-pr4.pdf',
   'tnps/lr3': 'reports/tnps-lr3.pdf',
+  'usr/tm': 'reports/usr-tm.pdf',
 }

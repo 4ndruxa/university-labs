@@ -11,6 +11,7 @@ import { maidLab3 } from './labs/maid-lab3'
 import { maidLab5 } from './labs/maid-lab5'
 import { tnpsPr1, tnpsPr2, tnpsPr3, tnpsPr4 } from './labs/tnps'
 import { tnpsLr2, tnpsLr3 } from './labs/tnps-lr'
+import { usrTm } from './labs/usr-tm'
 import type { LabReport } from './types'
 
 const REPORTS: Record<string, LabReport> = {
@@ -24,6 +25,7 @@ const REPORTS: Record<string, LabReport> = {
   'tnps/pr3': tnpsPr3,
   'tnps/pr4': tnpsPr4,
   'tnps/lr3': tnpsLr3,
+  'usr/tm': usrTm,
 }
 
 const args = process.argv.slice(2)

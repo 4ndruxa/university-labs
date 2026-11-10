@@ -1,9 +1,10 @@
 // Новий предмет: тека в src/subjects + запис у SUBJECTS
 import { maid } from './maid/meta'
 import { tnps } from './tnps/meta'
+import { usr } from './usr/meta'
 import type { Subject, Work } from './types'
 
-export const SUBJECTS: readonly Subject[] = [maid, tnps]
+export const SUBJECTS: readonly Subject[] = [maid, tnps, usr]
 
 export function findSubject(id: string | undefined): Subject | undefined {
   return SUBJECTS.find((s) => s.id === id)

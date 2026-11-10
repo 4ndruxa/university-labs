@@ -7,6 +7,7 @@ describe('Реєстр предметів', () => {
     expect(SUBJECTS.map((s) => s.title)).toEqual([
       'Методи аналізу інтервальних даних',
       'Теорія надійності програмних систем',
+      'Управління та стратегічний розвиток ІТ-бізнесу',
     ])
   })
   it('унікальні ідентифікатори предметів і робіт', () => {
@@ -17,7 +18,10 @@ describe('Реєстр предметів', () => {
     for (const s of SUBJECTS) {
       for (const w of s.works) {
         const n = w.short.replace(/^\D+/, '')
-        if (w.kind === 'practical') {
+        if (w.kind === 'training') {
+          expect(w.short).toBe('Тренінг')
+          expect(w.title).toBe('Тренінг та самостійна робота')
+        } else if (w.kind === 'practical') {
           expect(w.short).toBe(`ПР${n}`)
           expect(w.title).toBe(`Практична робота №${n}`)
         } else {
