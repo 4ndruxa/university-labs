@@ -31,6 +31,7 @@ export const tnps: Subject = {
       short: 'ЛР2',
       title: 'Лабораторна робота №2',
       topic: 'Дослідження надійності і ризику відновлювальної нерезервованої системи',
+      component: lazy(() => import('./pages/Lr2')),
     },
     {
       id: 'pr3',

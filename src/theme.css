@@ -514,3 +514,48 @@ button.matrix-cell:hover {
     background: #fff;
   }
 }
+
+/* Графіки у «вікнах» програми (на аркуші A4 — свої, чорно-білі стилі в a4.css) */
+.window-chart {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.window-chart .chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: inherit;
+}
+.window-chart .chart-grid {
+  stroke: var(--bs-border-color);
+}
+.window-chart .chart-axis {
+  stroke: var(--bs-body-color);
+}
+.window-chart .chart-tick,
+.window-chart .chart-title {
+  fill: var(--bs-secondary-color);
+  font-size: 12px;
+}
+.window-chart .chart-line {
+  fill: none;
+  stroke: var(--bs-primary);
+  stroke-width: 2;
+}
+.window-chart .chart-marker {
+  fill: var(--bs-body-bg);
+  stroke: var(--bs-primary);
+  stroke-width: 1.6;
+}
+.window-chart .chart-legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2em 1.2em;
+  font-size: 0.9rem;
+}
+.window-chart .chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
