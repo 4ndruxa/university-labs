@@ -20,4 +20,4 @@ export function padded(min: number, max: number, frac = 0.08): [number, number] 
   return [min - span * frac, max + span * frac]
 }
 
-export const fmtTick = (t: number): string => (Math.abs(t) >= 1000 ? `${t / 1000}k` : String(Number(t.toPrecision(6))))
+export const fmtTick = (t: number): string => (Math.abs(t) >= 10000 ? `${t / 1000}k` : String(Number(t.toPrecision(6))))

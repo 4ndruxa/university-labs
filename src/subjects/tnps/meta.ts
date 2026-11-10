@@ -39,6 +39,7 @@ export const tnps: Subject = {
       title: 'Практична робота №3',
       kind: 'practical',
       topic: 'Надійність і ризик нерезервованої невідновлювальної системи',
+      component: lazy(() => import('./pages/Pr3')),
     },
     {
       id: 'pr4',
