@@ -4,7 +4,7 @@
 export const REPORTS: Record<string, string> = {
   'maid/lab1': 'reports/maid-lab1.pdf',
   'maid/lab2': 'reports/maid-lab2.pdf',
-  'maid/lab3': '',
+  'maid/lab3': 'reports/maid-lab3.pdf',
   'maid/lab4': '',
   'maid/lab5': '',
   'maid/lab6': '',
