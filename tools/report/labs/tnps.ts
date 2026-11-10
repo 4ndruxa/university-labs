@@ -4,7 +4,9 @@ import { PROFILE } from '../../../src/profile'
 import { computeIndicators } from '../../../src/subjects/tnps/core/indicators'
 import { PR1_INTERVAL, PR1_TASK } from '../../../src/subjects/tnps/core/pr1'
 import { PR2_VARIANTS, solvePr2 } from '../../../src/subjects/tnps/core/pr2'
-import { dash, figure, grid, link, p, runs, table, type Block, type Col } from '../lib/docx'
+import { PR3_VARIANTS, solvePr3 } from '../../../src/subjects/tnps/core/pr3'
+import { PR4_DATA, PR4_SCALE, PR4_SCHEME, PR4_TIME, solvePr4, type ElementData, type Step } from '../../../src/subjects/tnps/core/pr4'
+import { TEXT_WIDTH_MM, dash, figure, grid, link, p, runs, table, type Block, type Col } from '../lib/docx'
 import { withSite } from '../lib/shots'
 import type { LabReport } from '../types'
 import { REPO_URL, workUrl } from './common'
@@ -146,5 +148,117 @@ export const tnpsPr2: LabReport = {
       ...electronic('tnps', 'pr2'),
     ]
     return { title: null, body, docTitle: `Практична робота №2 — ${DISCIPLINE}` }
+  },
+}
+
+/** Рисунок з підписом «Рис. N. …» по центру, як на бланку */
+const blankFigure = (png: Buffer, n: number, title: string, widthMm = 150): Block[] =>
+  figure(png, n, title, widthMm).map((par, i) => (i === 1 ? center([`Рис. ${n}. ${title}`], { after: 160 }) : par))
+
+export const tnpsPr3: LabReport = {
+  file: 'ТНПС_ПР3',
+  async build() {
+    const variant = PROFILE.listNumber >= 1 && PROFILE.listNumber <= PR3_VARIANTS.length ? PROFILE.listNumber : 1
+    const v = PR3_VARIANTS[variant - 1]
+    const r = solvePr3(v)
+    const [gChart, rChart] = await withSite('tnps/pr3', async (page, shot) => {
+      await page.addStyleTag({ content: '.a4-sheet figcaption { display: none !important; }' })
+      return [await shot('.a4-sheet figure >> nth=0'), await shot('.a4-sheet figure >> nth=1')]
+    })
+    const sci = (x: number): string => {
+      const e = Math.floor(Math.log10(Math.abs(x)))
+      return `${ua(x / 10 ** e)}·10${String(e).replace(/./g, (c) => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)])}`
+    }
+    const last = r.rows.at(-1)!
+    const second = r.rows[1]
+
+    const body: Block[] = [
+      heading('Практична робота №3'),
+      student('Студента групи'),
+      center([new TextRun({ text: `Варіант ${variant}`, bold: true })]),
+      p(`Досліджуються показники надійності нерезервованої невідновлювальної системи, яка складається з ${v.n0} рівнонадійних елементів, імовірнісні величини яких підкорені експоненціальному закону розподілу. Імовірність безвідмовної роботи системи протягом ${ua(v.t0)} годин рівна ${ua(v.p0)}. Ризик відмови одного елемента становить ${ua(v.r)}. Побудувати функцію ризику протягом ${ua(v.tMax)} годин з кроком по часу ${ua(v.step)} год для подібної системи, але яка складалася б вже з ${v.n} елементів.`, { spacing: { before: 160 } }),
+
+      block('Розв’язок'),
+      p(`1. Для нерезервованої системи з рівнонадійних елементів P(t) = e^(−nλt), звідси інтенсивність відмови системи:`),
+      center([`λc = −ln P(t₀) / t₀ = −ln ${ua(v.p0)} / ${ua(v.t0)} = ${sci(r.lambdaSys0)} год⁻¹.`]),
+      p('2. Інтенсивність відмови одного елемента:'),
+      center([`λ = λc / n = ${sci(r.lambdaSys0)} / ${v.n0} = ${sci(r.lambda)} год⁻¹.`]),
+      p(`3. Для системи з ${v.n} елементів:`),
+      center([`λc = ${v.n}·${sci(r.lambda)} = ${sci(r.lambdaSys)} год⁻¹;  T = 1/λc = ${ua(r.T, 2)} год.`]),
+      p('4. Ризик системи (точна формула) і сума ризиків окремих елементів (наближена формула):'),
+      center([`R(t) = (Q(t) / λc)·Σλᵢrᵢ = (1 − e^(−nλt))·r;   R*(t) = Σqᵢ(t)rᵢ = n·(1 − e^(−λt))·r.`]),
+      p('Функція ризику:'),
+      center([`Gr(t, n) = R(t) / R*(t) = (1 − e^(−nλt)) / (n·(1 − e^(−λt))).`]),
+      p(`Наприклад, для t = ${ua(second.t)} год: R = (1 − e^(−${sci(r.lambdaSys)}·${ua(second.t)}))·${ua(v.r)} = ${ua(second.risk, 2)}; R* = ${v.n}·(1 − e^(−${sci(r.lambda)}·${ua(second.t)}))·${ua(v.r)} = ${ua(second.riskSum, 2)}; Gr = ${ua(second.risk, 2)} / ${ua(second.riskSum, 2)} = ${ua(second.g)}. При t → 0 Gr → 1.`),
+      table(
+        [
+          { title: 't, год', widthMm: 22, align: 'center' }, { title: 'P(t)', widthMm: 28, align: 'center' }, { title: 'R(t)', widthMm: 30, align: 'center' },
+          { title: 'R*(t)', widthMm: 30, align: 'center' }, { title: `Gr(t, ${v.n})`, widthMm: 30, align: 'center' },
+        ],
+        r.rows.map((x) => [ua(x.t), ua(x.p), ua(x.risk, 2), ua(x.riskSum, 2), ua(x.g)]),
+      ),
+      ...blankFigure(gChart, 1, `Функція ризику Gr(t, ${v.n})`),
+      ...blankFigure(rChart, 2, 'Ризик системи R(t) і сума ризиків елементів R*(t)'),
+      p(`Висновок: інтенсивність відмови одного елемента λ = ${sci(r.lambda)} год⁻¹. Функція ризику системи з ${v.n} елементів спадає від 1 до ${ua(last.g)} при t = ${ua(v.tMax)} год: з часом справжній ризик системи R(t) = ${ua(last.risk, 2)} стає дедалі меншим за суму ризиків окремих елементів R*(t) = ${ua(last.riskSum, 2)}, бо невідновлювальна система після першої відмови вже не працює і подальші відмови елементів не додають ризику.`),
+      ...electronic('tnps', 'pr3'),
+    ]
+    return { title: null, body, docTitle: `Практична робота №3 — ${DISCIPLINE}` }
+  },
+}
+
+export const tnpsPr4: LabReport = {
+  file: 'ТНПС_ПР4',
+  async build() {
+    const t = PR4_TIME
+    const r = solvePr4(PR4_SCHEME, PR4_DATA, t)
+    const [scheme] = await withSite('tnps/pr4', async (page, shot) => {
+      await page.addStyleTag({ content: '.a4-sheet figcaption { display: none !important; }' })
+      return [await shot('.a4-sheet figure >> nth=0')]
+    })
+    const up = (x: number) => ua(x, 1 - x < 1e-3 ? 6 : 4)
+    const pick = (d: ElementData) => ('p' in d ? ['', ua(d.p)] : 'q' in d ? ['q', ua(d.q)] : ['l', ua(d.lambda)])
+    const dataRows = (ids: number[]): string[][] => [
+      ['P(t)', ...ids.map((id) => (pick(PR4_DATA[id])[0] === '' ? pick(PR4_DATA[id])[1] : ''))],
+      ['λ·10⁻⁴', ...ids.map((id) => (pick(PR4_DATA[id])[0] === 'l' ? pick(PR4_DATA[id])[1] : ''))],
+      ['Q(t)', ...ids.map((id) => (pick(PR4_DATA[id])[0] === 'q' ? pick(PR4_DATA[id])[1] : ''))],
+    ]
+    const half = (ids: number[]) =>
+      table([{ title: '', widthMm: 25 }, ...ids.map((id): Col => ({ title: String(id), widthMm: 15, align: 'center' }))], dataRows(ids))
+    const given = (d: ElementData) => ('p' in d ? `P = ${ua(d.p)}` : 'q' in d ? `Q = ${ua(d.q)}` : `λ = ${ua(d.lambda)}·10⁻⁴`)
+    const calc = (d: ElementData, p: number) =>
+      'p' in d ? up(p) : 'q' in d ? `1 − ${ua(d.q)} = ${up(p)}` : `e^(−${ua(d.lambda * PR4_SCALE, 6)}·${t}) = ${up(p)}`
+    const step = (s: Step): string => {
+      const name = `P_{${s.name}}`
+      const parts = s.parts.map((x) => `P_{${x.slice(1)}}`)
+      const nums = s.values.map(up)
+      return s.type === 'ser'
+        ? `${name} = ${parts.join('·')} = ${nums.join('·')} = ${up(s.p)}`
+        : `${name} = 1 − ${parts.map((x) => `(1 − ${x})`).join('')} = 1 − ${nums.map((x) => `(1 − ${x})`).join('')} = ${up(s.p)}`
+    }
+    // найслабші з нерезервованих елементів, увімкнених послідовно в основний ланцюг
+    const serial = PR4_SCHEME.type === 'ser' ? PR4_SCHEME.items.flatMap((x) => (x.type === 'el' ? [x.id] : [])) : []
+    const weakest = r.elements.filter((e) => serial.includes(e.id)).sort((a, b) => a.p - b.p).slice(0, 2)
+
+    const body: Block[] = [
+      heading('Практична робота №4'),
+      student('Студента групи'),
+      p(`Знайти імовірність безвідмовної роботи системи, зображеної на структурній схемі, протягом ${t} годин. Коли відомі наступні показники надійності елементів:`, { spacing: { before: 160 } }),
+      half(Array.from({ length: 10 }, (_, i) => i + 1)),
+      half(Array.from({ length: 10 }, (_, i) => i + 11)),
+      ...blankFigure(scheme, 1, 'Структурна схема системи', TEXT_WIDTH_MM),
+
+      block('Розв’язок'),
+      p(`1. Імовірності безвідмовної роботи елементів за t = ${t} год: якщо задано Q, то P = 1 − Q; якщо задано інтенсивність відмов λ (експоненціальний закон), то P = e^(−λt).`),
+      table(
+        [{ title: '№', widthMm: 12, align: 'center' }, { title: 'Задано', widthMm: 45, align: 'center' }, { title: `P(${t})`, widthMm: 75, align: 'center' }],
+        r.elements.map((e) => [String(e.id), given(e.data), calc(e.data, e.p)]),
+      ),
+      p('2. Згортаємо схему: для послідовного з’єднання P = ΠPᵢ, для паралельного P = 1 − Π(1 − Pᵢ). Проміжні блоки позначено римськими цифрами в порядку згортки:', { spacing: { before: 160 } }),
+      ...r.steps.map((s) => new Paragraph({ alignment: AlignmentType.LEFT, children: runs(step(s)) })),
+      p(`Відповідь: імовірність безвідмовної роботи системи протягом ${t} год P_{сист}(${t}) ≈ ${ua(r.p)}.`, { spacing: { before: 160 } }),
+      p(`Висновок: паралельні ділянки схеми мають імовірність безвідмовної роботи, близьку до 1, тому надійність системи визначають насамперед послідовно ввімкнені нерезервовані елементи — ${weakest.map((e) => `${e.id} (P = ${ua(e.p)})`).join(' і ')}. Саме їх резервування найбільше підвищило б надійність системи.`),
+      ...electronic('tnps', 'pr4'),
+    ]
+    return { title: null, body, docTitle: `Практична робота №4 — ${DISCIPLINE}` }
   },
 }

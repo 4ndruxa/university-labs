@@ -7,7 +7,8 @@ import { PROFILE } from '../../src/profile'
 import { report } from './lib/docx'
 import { maidLab1 } from './labs/maid-lab1'
 import { maidLab2 } from './labs/maid-lab2'
-import { tnpsPr1, tnpsPr2 } from './labs/tnps'
+import { tnpsPr1, tnpsPr2, tnpsPr3, tnpsPr4 } from './labs/tnps'
+import { tnpsLr2, tnpsLr3 } from './labs/tnps-lr'
 import type { LabReport } from './types'
 
 const REPORTS: Record<string, LabReport> = {
@@ -15,6 +16,10 @@ const REPORTS: Record<string, LabReport> = {
   'maid/lab2': maidLab2,
   'tnps/pr1': tnpsPr1,
   'tnps/pr2': tnpsPr2,
+  'tnps/lr2': tnpsLr2,
+  'tnps/pr3': tnpsPr3,
+  'tnps/pr4': tnpsPr4,
+  'tnps/lr3': tnpsLr3,
 }
 
 const args = process.argv.slice(2)

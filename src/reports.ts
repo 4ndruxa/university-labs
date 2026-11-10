@@ -10,8 +10,8 @@ export const REPORTS: Record<string, string> = {
   'maid/lab6': '',
   'tnps/pr1': 'reports/tnps-pr1.pdf',
   'tnps/pr2': 'reports/tnps-pr2.pdf',
-  'tnps/lr2': '',
-  'tnps/pr3': '',
-  'tnps/pr4': '',
-  'tnps/lr3': '',
+  'tnps/lr2': 'reports/tnps-lr2.pdf',
+  'tnps/pr3': 'reports/tnps-pr3.pdf',
+  'tnps/pr4': 'reports/tnps-pr4.pdf',
+  'tnps/lr3': 'reports/tnps-lr3.pdf',
 }
