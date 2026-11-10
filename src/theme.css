@@ -559,3 +559,24 @@ button.matrix-cell:hover {
   align-items: center;
   gap: 0.35em;
 }
+
+/* Структурні схеми надійності (ТНПС ПР4) */
+.scheme {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.scheme-wire {
+  stroke: currentColor;
+  stroke-width: 1.1;
+}
+.scheme-box {
+  fill: var(--bs-body-bg);
+  stroke: currentColor;
+  stroke-width: 1.1;
+}
+.scheme-label {
+  fill: currentColor;
+  font-size: 11px;
+  font-family: inherit;
+}

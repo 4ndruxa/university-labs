@@ -47,6 +47,7 @@ export const tnps: Subject = {
       title: 'Практична робота №4',
       kind: 'practical',
       topic: 'Метод структурних схем: імовірність безвідмовної роботи системи',
+      component: lazy(() => import('./pages/Pr4')),
     },
     {
       id: 'lr3',
