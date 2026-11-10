@@ -4,7 +4,9 @@ export interface Series {
   label: string
   values: number[]
   dash?: string // stroke-dasharray
-  marker: 'circle' | 'square' | 'triangle'
+  marker: 'circle' | 'square' | 'triangle' | 'diamond'
+  /** Колір лінії у вікнах програми; на аркуші A4 графіки чорно-білі */
+  color?: string
 }
 
 interface Props {
@@ -21,10 +23,12 @@ const W = 600
 const H = 280
 const M = { l: 48, r: 14, t: 22, b: 40 }
 
-function Marker({ kind, x, y }: { kind: Series['marker']; x: number; y: number }) {
-  if (kind === 'circle') return <circle className="chart-marker" cx={x} cy={y} r={4} />
-  if (kind === 'square') return <rect className="chart-marker" x={x - 4} y={y - 4} width={8} height={8} />
-  return <path className="chart-marker" d={`M${x} ${y - 5} L${x + 5} ${y + 4} L${x - 5} ${y + 4} Z`} />
+function Marker({ kind, x, y, color }: { kind: Series['marker']; x: number; y: number; color?: string }) {
+  const style = color ? { stroke: color } : undefined
+  if (kind === 'circle') return <circle className="chart-marker" style={style} cx={x} cy={y} r={4} />
+  if (kind === 'square') return <rect className="chart-marker" style={style} x={x - 4} y={y - 4} width={8} height={8} />
+  if (kind === 'diamond') return <path className="chart-marker" style={style} d={`M${x} ${y - 5} L${x + 5} ${y} L${x} ${y + 5} L${x - 5} ${y} Z`} />
+  return <path className="chart-marker" style={style} d={`M${x} ${y - 5} L${x + 5} ${y + 4} L${x - 5} ${y + 4} Z`} />
 }
 
 /** Лінійний графік кількох серій; серії розрізняються типом лінії та маркером (читається й у ч/б) */
@@ -38,8 +42,8 @@ export function LineChart({ x, series, yMin = 0, yMax = 1, xTitle, yTitle, ariaL
         {series.map((s) => (
           <span key={s.label} className="chart-legend-item">
             <svg viewBox="0 0 34 12" width="34" height="12" aria-hidden>
-              <line className="chart-line" strokeDasharray={s.dash} x1={1} x2={33} y1={6} y2={6} />
-              <Marker kind={s.marker} x={17} y={6} />
+              <line className="chart-line" style={s.color ? { stroke: s.color } : undefined} strokeDasharray={s.dash} x1={1} x2={33} y1={6} y2={6} />
+              <Marker kind={s.marker} x={17} y={6} color={s.color} />
             </svg>
             {s.label}
           </span>
@@ -59,8 +63,8 @@ export function LineChart({ x, series, yMin = 0, yMax = 1, xTitle, yTitle, ariaL
         <line className="chart-axis" x1={M.l} x2={M.l} y1={M.t} y2={sy(yMin)} />
         {series.map((s) => (
           <g key={s.label}>
-            <polyline className="chart-line" strokeDasharray={s.dash} points={s.values.map((v, i) => `${sx(x[i])},${sy(v)}`).join(' ')} />
-            {s.values.map((v, i) => <Marker key={i} kind={s.marker} x={sx(x[i])} y={sy(v)} />)}
+            <polyline className="chart-line" style={s.color ? { stroke: s.color } : undefined} strokeDasharray={s.dash} points={s.values.map((v, i) => `${sx(x[i])},${sy(v)}`).join(' ')} />
+            {s.values.map((v, i) => <Marker key={i} kind={s.marker} x={sx(x[i])} y={sy(v)} color={s.color} />)}
           </g>
         ))}
         {xTitle && <text className="chart-title" x={W - M.r} y={H - 6} textAnchor="end">{xTitle}</text>}

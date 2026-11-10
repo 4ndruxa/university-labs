@@ -54,6 +54,7 @@ export const tnps: Subject = {
       short: 'ЛР3',
       title: 'Лабораторна робота №3',
       topic: 'Визначення надійності складних систем з резервуванням',
+      component: lazy(() => import('./pages/Lr3')),
     },
   ],
 }
