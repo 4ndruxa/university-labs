@@ -4,9 +4,17 @@ export interface Series {
   label: string
   values: number[]
   dash?: string // stroke-dasharray
-  marker: 'circle' | 'square' | 'triangle' | 'diamond'
+  /** 'none' — гладка крива з багатьох точок, без маркерів */
+  marker: 'circle' | 'square' | 'triangle' | 'diamond' | 'none'
   /** Колір лінії у вікнах програми; на аркуші A4 графіки чорно-білі */
   color?: string
+}
+
+/** Виділена смуга по осі x (напр. результуючий інтервал) */
+export interface Band {
+  from: number
+  to: number
+  label?: string
 }
 
 interface Props {
@@ -14,6 +22,11 @@ interface Props {
   series: Series[]
   yMin?: number
   yMax?: number
+  /** Підписи осі x; за замовчуванням — у кожній точці x */
+  xTicks?: number[]
+  bands?: Band[]
+  /** Горизонтальна лінія y = 0, якщо 0 у межах осі */
+  zeroLine?: boolean
   xTitle?: string
   yTitle?: string
   ariaLabel: string
@@ -24,6 +37,7 @@ const H = 280
 const M = { l: 48, r: 14, t: 22, b: 40 }
 
 function Marker({ kind, x, y, color }: { kind: Series['marker']; x: number; y: number; color?: string }) {
+  if (kind === 'none') return null
   const style = color ? { stroke: color } : undefined
   if (kind === 'circle') return <circle className="chart-marker" style={style} cx={x} cy={y} r={4} />
   if (kind === 'square') return <rect className="chart-marker" style={style} x={x - 4} y={y - 4} width={8} height={8} />
@@ -32,7 +46,7 @@ function Marker({ kind, x, y, color }: { kind: Series['marker']; x: number; y: n
 }
 
 /** Лінійний графік кількох серій; серії розрізняються типом лінії та маркером (читається й у ч/б) */
-export function LineChart({ x, series, yMin = 0, yMax = 1, xTitle, yTitle, ariaLabel }: Props) {
+export function LineChart({ x, series, yMin = 0, yMax = 1, xTicks, bands = [], zeroLine, xTitle, yTitle, ariaLabel }: Props) {
   const sx = scale(x[0], x[x.length - 1], M.l, W - M.r)
   const sy = scale(yMin, yMax, H - M.b, M.t)
   const yTicks = niceTicks(yMin, yMax, 5)
@@ -56,9 +70,18 @@ export function LineChart({ x, series, yMin = 0, yMax = 1, xTitle, yTitle, ariaL
             <text className="chart-tick" x={M.l - 6} y={sy(t) + 4} textAnchor="end">{fmtTick(t)}</text>
           </g>
         ))}
-        {x.map((t) => (
+        {(xTicks ?? x).map((t) => (
           <text key={t} className="chart-tick" x={sx(t)} y={H - M.b + 16} textAnchor="middle">{fmtTick(t)}</text>
         ))}
+        {bands.map((b, i) => (
+          <g key={i}>
+            <rect className="chart-band" x={sx(b.from)} y={M.t} width={Math.max(1, sx(b.to) - sx(b.from))} height={sy(yMin) - M.t} />
+            <line className="chart-band-edge" x1={sx(b.from)} x2={sx(b.from)} y1={M.t} y2={sy(yMin)} />
+            <line className="chart-band-edge" x1={sx(b.to)} x2={sx(b.to)} y1={M.t} y2={sy(yMin)} />
+            {b.label && <text className="chart-title" x={sx((b.from + b.to) / 2)} y={M.t - 6} textAnchor="middle">{b.label}</text>}
+          </g>
+        ))}
+        {zeroLine && yMin < 0 && yMax > 0 && <line className="chart-zero" x1={M.l} x2={W - M.r} y1={sy(0)} y2={sy(0)} />}
         <line className="chart-axis" x1={M.l} x2={W - M.r} y1={sy(yMin)} y2={sy(yMin)} />
         <line className="chart-axis" x1={M.l} x2={M.l} y1={M.t} y2={sy(yMin)} />
         {series.map((s) => (

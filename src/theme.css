@@ -580,3 +580,15 @@ button.matrix-cell:hover {
   font-size: 11px;
   font-family: inherit;
 }
+.window-chart .chart-band {
+  fill: var(--bs-warning);
+  fill-opacity: 0.25;
+}
+.window-chart .chart-band-edge {
+  stroke: var(--bs-warning-text-emphasis);
+  stroke-dasharray: 4 3;
+}
+.window-chart .chart-zero {
+  stroke: var(--bs-secondary-color);
+  stroke-width: 1;
+}

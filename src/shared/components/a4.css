@@ -192,3 +192,14 @@
 .a4-sheet .scheme-box {
   fill: #fff;
 }
+.a4-sheet .chart-band {
+  fill: #000;
+  fill-opacity: 0.12;
+}
+.a4-sheet .chart-band-edge {
+  stroke: #000;
+  stroke-dasharray: 4 3;
+}
+.a4-sheet .chart-zero {
+  stroke: #000;
+}
