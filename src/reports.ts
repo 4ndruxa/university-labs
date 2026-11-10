@@ -6,7 +6,7 @@ export const REPORTS: Record<string, string> = {
   'maid/lab2': 'reports/maid-lab2.pdf',
   'maid/lab3': 'reports/maid-lab3.pdf',
   'maid/lab4': '',
-  'maid/lab5': '',
+  'maid/lab5': 'reports/maid-lab5.pdf',
   'maid/lab6': '',
   'tnps/pr1': 'reports/tnps-pr1.pdf',
   'tnps/pr2': 'reports/tnps-pr2.pdf',

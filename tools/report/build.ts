@@ -8,6 +8,7 @@ import { report } from './lib/docx'
 import { maidLab1 } from './labs/maid-lab1'
 import { maidLab2 } from './labs/maid-lab2'
 import { maidLab3 } from './labs/maid-lab3'
+import { maidLab5 } from './labs/maid-lab5'
 import { tnpsPr1, tnpsPr2, tnpsPr3, tnpsPr4 } from './labs/tnps'
 import { tnpsLr2, tnpsLr3 } from './labs/tnps-lr'
 import type { LabReport } from './types'
@@ -16,6 +17,7 @@ const REPORTS: Record<string, LabReport> = {
   'maid/lab1': maidLab1,
   'maid/lab2': maidLab2,
   'maid/lab3': maidLab3,
+  'maid/lab5': maidLab5,
   'tnps/pr1': tnpsPr1,
   'tnps/pr2': tnpsPr2,
   'tnps/lr2': tnpsLr2,
